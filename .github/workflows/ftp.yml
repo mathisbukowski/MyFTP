@@ -1,4 +1,4 @@
-name: NanoTekSpice
+name: MyFTP CI/CD
 
 env:
   MIRROR_URL: "git@github.com:EpitechPromo2028/B-NWP-400-LIL-4-1-myftp-mathis.bukowski.git"
