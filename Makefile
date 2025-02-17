@@ -1,6 +1,6 @@
 ##
 ## EPITECH PROJECT, 2025
-## my_gkrellm
+## MyFTP
 ## File description:
 ## makefile
 ##
@@ -11,7 +11,7 @@ OBJ = $(SRC:.c=.o)
 
 NAME = myftp
 
-CFLAGS = -std=c++20 -Wall -Werror -Wextra -I./include
+CFLAGS = -Wall -Werror -Wextra -I./include
 
 all: $(NAME)
 
