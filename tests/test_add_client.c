@@ -8,6 +8,7 @@
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 #include "ftp.h"
+#include "test_utils.h"
 
 static server_t server;
 
@@ -96,4 +97,16 @@ Test(add_client, null_server, .fini = teardown_add)
 {
     add_client(NULL, 10);
     cr_assert_null(server.clients, "Nothing should be added if the server is NULL.");
+}
+
+Test(add_client, malloc_failure, .init = setup_add, .fini = teardown_add)
+{
+    server_t *new_serv = malloc(sizeof(server_t));
+    new_serv->clients = NULL;
+    int initial_socket = 42;
+    should_malloc_fail = 1;
+    add_client(new_serv, initial_socket);
+    cr_assert_null(new_serv->clients);
+    should_malloc_fail = 0;
+    free(new_serv);
 }
