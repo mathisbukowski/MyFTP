@@ -23,21 +23,22 @@ jobs:
       - uses: actions/checkout@v4
       - name: check_coding_style
         run: |
-          check.sh "$(pwd)" "$(pwd)"
-          codingLogFile="$(pwd)/coding-style-reports.log"
-          if [ -s "$codingLogFile" ]; then
-            while IFS= read -r line; do
-              IFS=':' read -ra fields <<< "$line"
-              file="${fields[0]}"
-              line="${fields[1]}"
-              name="${fields[2]}"
-              type="${fields[3]}"
-              echo "::error title=$name coding style error,file=$file,line=$line::$type"
-            done < "$codingLogFile"
-            exit 1
-          else
-            echo "No coding style errors detected"
-          fi
+            check.sh "$(pwd)" "$(pwd)"
+            codingLogFile="$(pwd)/coding-style-reports.log"
+            if [ -s "$codingLogFile" ]; then
+                while IFS= read -r line; do
+                    set -- $(echo "$line" | tr ':' ' ')
+                    file="$1"
+                    line_number="$2"
+                    name="$3"
+                    type="$4"
+                    echo "::error title=$name coding style error,file=$file,line=$line_number::$type"
+                done < "$codingLogFile"
+                exit 1
+            else
+                echo "✅ No coding style errors."
+            fi
+
   
 
   check_program_compilation:
