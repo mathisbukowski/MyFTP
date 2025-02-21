@@ -4,3 +4,8 @@
 myftp
 vgcore.*
 .vscode/
+*.out
+*.gcno
+*.gcda
+*.gcov
+unit_tests
