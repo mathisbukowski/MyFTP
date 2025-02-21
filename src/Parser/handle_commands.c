@@ -15,6 +15,7 @@ command_t const commands[LENGTH_COMMANDS] = {
     {"QUIT", &quit_command},
     {"PORT", &port_command},
     {"TEST", &test_command},
+    {"PWD", &pwd_command},
     {NULL, NULL}
 };
 
