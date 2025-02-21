@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: check_coding_style
         run: |
-          check.sh "$(pwd)" "$(pwd)"
+          coding-style.sh "$(pwd)" "$(pwd)"
           codingLogFile="$(pwd)/coding-style-reports.log"
           if [ -s "$codingLogFile" ]; then
             while IFS= read -r line; do
