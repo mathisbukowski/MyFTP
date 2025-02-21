@@ -49,15 +49,24 @@ extern const command_t commands[LENGTH_COMMANDS];
 server_t *init_server(int port, char *path);
 void destroy_server(server_t *server);
 int ftp_server(server_t *server);
-
+int checking_server_error(server_t *server, struct sockaddr_in *sin,
+    char *address);
+int check_port(int port);
+int check_path(char *path);
 //client
 void add_client(server_t *server, int client_socket);
+void add_new_client(server_t *server, client_t *new_client);
 void remove_client(server_t *server, int client_socket);
 void delete_all_clients(server_t *server);
 client_t *find_client(server_t *server, int client_socket);
+client_t *find_last(server_t *server);
+void remove_or_update_list(server_t *server, client_t *curr, client_t *prev);
 
 //utils
 char **str_to_word_array(char *str, char const *delimiters);
+int word_length(char *str, int i, const char *delimiters);
+int count_words_in_array(char *tab, const char *delimiters);
+int iscustomalphanum(char letter, char const *delimiters);
 
 //commands
 void handle_commands(client_t *client, char *command);
