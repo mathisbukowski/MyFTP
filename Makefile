@@ -36,7 +36,8 @@ NO_MA = src/utils/str_to_word_array.c \
 		src/Core/client/add_client.c \
 		src/Core/client/remove_client.c \
 		src/Core/client/find_client.c \
-		src/Core/server.c
+		src/Core/server.c\
+		tests/test_utils.c \
 
 SRC_TESTS = tests/test_str_to_word_array.c \
 			tests/test_add_client.c \
@@ -59,6 +60,7 @@ NAME = myftp
 TEST_NAME = unit_tests
 
 CFLAGS = -Wall -Werror -Wextra -I./include -g
+TEST_FLAGS = -lcriterion $(CFLAGS) -Wl,--wrap=malloc
 
 all: $(NAME)
 
@@ -78,7 +80,7 @@ fclean: clean
 re: fclean all
 
 tests_run: clean
-	gcc -o $(TEST_NAME) $(SRC_TESTS) $(NO_MA) --coverage -lcriterion $(CFLAGS) -Wl,--wrap=malloc
+	gcc -o $(TEST_NAME) $(SRC_TESTS) $(NO_MA) --coverage $(TEST_FLAGS)
 	./$(TEST_NAME) --verbose --full-stats
 
 gcovr_branches:

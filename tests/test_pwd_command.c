@@ -10,18 +10,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "ftp.h"
-
-
-static int should_malloc_fail = 0;
-
-void *__real_malloc(size_t size);
-
-void *__wrap_malloc(size_t size) {
-    if (should_malloc_fail) {
-        return NULL;
-    }
-    return __real_malloc(size);
-}
+#include "test_utils.h"
 
 void redirect_all_stdout(void)
 {
@@ -31,7 +20,6 @@ void redirect_all_stdout(void)
 
 Test(pwd_command, nominal_case, .init = redirect_all_stdout)
 {
-    should_malloc_fail = 0;
     client_t *client = malloc(sizeof(client_t));
     client->socket = 1;
     client->logged_in = 1;
