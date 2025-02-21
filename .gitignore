@@ -3,3 +3,4 @@
 *.a
 myftp
 vgcore.*
+.vscode/
