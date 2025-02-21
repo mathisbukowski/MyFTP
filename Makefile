@@ -16,6 +16,7 @@ SRC = src/main.c \
 	src/Parser/commands/quit_command.c \
 	src/Parser/commands/user_command.c \
 	src/Parser/commands/test_command.c \
+	src/Parser/commands/pwd_command.c \
 	src/Core/client/add_client.c \
 	src/Core/client/remove_client.c \
 	src/Core/client/find_client.c \
@@ -31,6 +32,7 @@ NO_MA = src/utils/str_to_word_array.c \
 		src/Parser/commands/quit_command.c \
 		src/Parser/commands/user_command.c \
 		src/Parser/commands/test_command.c \
+		src/Parser/commands/pwd_command.c \
 		src/Core/client/add_client.c \
 		src/Core/client/remove_client.c \
 		src/Core/client/find_client.c \
@@ -48,6 +50,7 @@ SRC_TESTS = tests/test_str_to_word_array.c \
 			tests/test_user.c \
 			tests/test_handle_commands.c \
 			tests/test_structure_init.c \
+			tests/test_pwd_command.c \
 
 OBJ = $(SRC:.c=.o)
 OBJ_TESTS = $(SRC_TESTS:.c=.o)
@@ -75,7 +78,7 @@ fclean: clean
 re: fclean all
 
 tests_run: clean
-	gcc -o $(TEST_NAME) $(SRC_TESTS) $(NO_MA) --coverage -lcriterion $(CFLAGS)
+	gcc -o $(TEST_NAME) $(SRC_TESTS) $(NO_MA) --coverage -lcriterion $(CFLAGS) -Wl,--wrap=malloc
 	./$(TEST_NAME) --verbose --full-stats
 
 gcovr_branches:

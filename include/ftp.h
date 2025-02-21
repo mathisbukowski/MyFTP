@@ -77,5 +77,6 @@ void quit_command(client_t *client, char *args);
 void port_command(client_t *client, char *args);
 void cdup_command(client_t *client, char *args);
 void test_command(client_t *client, char *args);
+void pwd_command(client_t *client, char *args);
 
 #endif //FTP_H
