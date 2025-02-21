@@ -75,13 +75,16 @@ void client_management(server_t *server)
     }
 }
 
-int checking_server_error(server_t *server, struct sockaddr_in *sin)
+int checking_server_error(server_t *server, struct sockaddr_in *sin,
+    char *address)
 {
+    if (!server || !sin || !address)
+        return 84;
     if (server->socket == -1) {
         fprintf(stderr, "Error: socket\n");
         return 84;
     }
-    if (inet_pton(AF_INET, LOCALHOST, &sin->sin_addr) != 1) {
+    if (inet_pton(AF_INET, address, &sin->sin_addr) != 1) {
         fprintf(stderr, "Error: inet_pton\n");
         return 84;
     }
@@ -93,7 +96,7 @@ int ftp_server(server_t *server)
     struct sockaddr_in sin;
 
     server->socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (checking_server_error(server, &sin) == 84)
+    if (checking_server_error(server, &sin, LOCALHOST) == 84)
         return 84;
     sin.sin_family = AF_INET;
     sin.sin_port = htons(server->port);
