@@ -26,7 +26,8 @@ void handle_commands(client_t *client, char *command)
     char *arg = commandArray[1] ? commandArray[1] : NULL;
 
     while (commands[i].name) {
-        if (strcmp(commands[i].name, commandArray[0]) == 0) {
+        if (commandArray[0] &&
+            strcmp(commands[i].name, commandArray[0]) == 0) {
             commands[i].func(client, arg);
             break;
         }

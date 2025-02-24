@@ -19,7 +19,7 @@ static void handle_client_connection(server_t *server, struct pollfd *fds,
     printf("New client connected\n");
     add_client(server, client_socket);
     fds[*nfds].fd = client_socket;
-    fds[*nfds].events = POLLIN;
+    fds[*nfds].events = POLLIN | POLLHUP | POLLERR;
     (*nfds)++;
 }
 
@@ -29,11 +29,8 @@ static void handle_client_data(server_t *server, struct pollfd *fds,
     char buff_read[1024] = {0};
     ssize_t bytes_read = read(fds[index].fd, buff_read, sizeof(buff_read) - 1);
 
-    if (bytes_read <= 0) {
-        if (bytes_read == 0)
-            printf("Client disconnected\n");
-        else
-            fprintf(stderr, "Error: read\n");
+    if (bytes_read < 0) {
+        fprintf(stderr, "Error: read\n");
         close(fds[index].fd);
         remove_client(server, fds[index].fd);
         (*nfds)--;
@@ -48,6 +45,15 @@ static void handle_client_data(server_t *server, struct pollfd *fds,
 void handle_input(int *nfds, struct pollfd *fds, server_t *server)
 {
     for (int i = 0; i < *nfds; i++) {
+        if (fds[i].revents & (POLLHUP | POLLERR)) {
+            printf("Client disconnected (socket closed)\n");
+            close(fds[i].fd);
+            remove_client(server, fds[i].fd);
+            (*nfds)--;
+            fds[i] = fds[(*nfds)];
+            i--;
+            continue;
+        }
         if (!(fds[i].revents & POLLIN))
             continue;
         if (fds[i].fd == server->socket)
