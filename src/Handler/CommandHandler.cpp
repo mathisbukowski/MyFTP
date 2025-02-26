@@ -1,0 +1,31 @@
+/*
+** EPITECH PROJECT, 2025
+** MyFTP
+** File description:
+** 02
+*/
+
+#include "CommandHandler.hpp"
+
+ftp::CommandHandler::CommandHandler()
+{
+    _commands = {
+        {"PWD", []() { return std::make_unique<PwdCommand>(); }},
+        {"TEST", []() { return std::make_unique<TestCommand>(); }},
+    };
+}
+
+ftp::CommandHandler::~CommandHandler()
+{
+}
+
+std::unique_ptr<ftp::ICommand> ftp::CommandHandler::handleCommand(std::string command, Client &client)
+{
+    for (auto &cmd : _commands) {
+        if (cmd.first == command) {
+            return cmd.second();
+        }
+    }
+    dprintf(client.getSocket(), "500 Unknown command\n");
+    return nullptr;
+}

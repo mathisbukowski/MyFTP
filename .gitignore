@@ -9,3 +9,8 @@ vgcore.*
 *.gcda
 *.gcov
 unit_tests
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CMakeLists.txt
+cmake-build-debug
