@@ -7,11 +7,14 @@
 
 #include "CommandHandler.hpp"
 
-ftp::CommandHandler::CommandHandler()
+ftp::CommandHandler::CommandHandler(Server &server) : _server(server)
 {
     _commands = {
         {"PWD", []() { return std::make_unique<PwdCommand>(); }},
         {"TEST", []() { return std::make_unique<TestCommand>(); }},
+        {"USER", []() { return std::make_unique<UserCommand>(); }},
+        {"PASS", []() { return std::make_unique<PasswordCommand>(); }},
+        {"QUIT", [&server]() { return std::make_unique<QuitCommand>(server); }},
     };
 }
 

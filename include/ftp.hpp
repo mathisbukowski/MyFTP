@@ -27,6 +27,8 @@ namespace ftp {
 	class CommandHandler;
 	class PwdCommand;
 	class TestCommand;
+	class UserCommand;
+	class PasswordCommand;
 
 	class ICommand {
 	public:

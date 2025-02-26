@@ -25,12 +25,12 @@ void ftp::Client::setSocket(const int socket)
     _socket = socket;
 }
 
-int ftp::Client::getLoggedIn() const
+bool ftp::Client::getLoggedIn() const
 {
     return _logged_in;
 }
 
-void ftp::Client::setLoggedIn(const int logged_in)
+void ftp::Client::setLoggedIn(const bool logged_in)
 {
     _logged_in = logged_in;
 }
