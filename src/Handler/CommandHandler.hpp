@@ -11,11 +11,13 @@
 #include "../../include/ftp.hpp"
 #include "../Server/Server.hpp"
 #include "../Command/Commands/PwdCommand.hpp"
-#include "Command/Commands/CwdCommand.hpp"
-#include "Command/Commands/CdupCommand.hpp"
+#include "../Command/Commands/CwdCommand.hpp"
+#include "../Command/Commands/CdupCommand.hpp"
 #include "../Command/Commands/UserCommand.hpp"
 #include "../Command/Commands/PasswordCommand.hpp"
 #include "../Command/Commands/QuitCommand.hpp"
+#include "../Command/Commands/HelpCommand.hpp"
+#include "../Command/Commands/NoopCommand.hpp"
 #include <map>
 #include <memory>
 #include <functional>

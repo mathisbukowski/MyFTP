@@ -16,7 +16,9 @@ ftp::CommandHandler::CommandHandler(Server &server) : _server(server)
         {"PASS", []() { return std::make_unique<PasswordCommand>(); }},
         {"QUIT", [&server]() { return std::make_unique<QuitCommand>(server); }},
         {"CWD", []() {return std::make_unique<CwdCommand>(); }},
-        {"CDUP", []() {return std::make_unique<CdupCommand>(); }}
+        {"CDUP", []() {return std::make_unique<CdupCommand>(); }},
+        {"HELP", []() {return std::make_unique<HelpCommand>(); }},
+        {"NOOP", []() {return std::make_unique<NoopCommand>(); }},
     };
 }
 
