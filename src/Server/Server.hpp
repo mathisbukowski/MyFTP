@@ -23,6 +23,8 @@ namespace ftp {
                 std::string _message;
         };
         public:
+            pollfd _fds[10];
+            int _nfds;
             Server(int port, std::string path);
             ~Server();
             int process();
@@ -38,8 +40,8 @@ namespace ftp {
             void removeClient(int client_socket);
             int checkPort(int port);
             int checkPath(std::string path);
-            void handleClientDisconnection(pollfd *fds, int *nfds, int *i);
-            void handleClientInput(pollfd *fds, int *nfds);
+            void handleClientDisconnection(pollfd* fds, int* nfds, int client_socket, bool isQuitCommand);
+            void handleClientInput(pollfd* fds);
             void setServerAddr(sockaddr_in serverAddr);
             sockaddr_in getServerAddr() const;
             std::string getCommand(char *buffer);
@@ -51,7 +53,7 @@ namespace ftp {
             int _port;
             std::string _rootPath;
             int _socketServer;
-            pollfd _fds[10];
+
             sockaddr_in _serverAddr;
         private:
     };

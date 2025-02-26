@@ -10,7 +10,13 @@ SRC = src/main.cpp \
 		src/Client/Client.cpp \
 		src/Command/ACommand.cpp \
 		src/Command/Commands/PwdCommand.cpp \
-		src/Command/Commands/TestCommand.cpp \
+		src/Command/Commands/UserCommand.cpp \
+		src/Command/Commands/PasswordCommand.cpp \
+		src/Command/Commands/QuitCommand.cpp \
+		src/Command/Commands/HelpCommand.cpp \
+		src/Command/Commands/NoopCommand.cpp \
+		src/Command/Commands/CwdCommand.cpp \
+		src/Command/Commands/CdupCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 

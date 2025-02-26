@@ -114,13 +114,13 @@ void ftp::Server::removeClient(int client_socket)
 
 void ftp::Server::clientManagement()
 {
-    int nfds = 1;
     int ret = 0;
 
     _fds[0].fd = _socketServer;
     _fds[0].events = POLLIN;
+    _nfds = 1;
     while (1) {
-        ret = poll(_fds, nfds, -1);
+        ret = poll(_fds, _nfds, -1);
         if (ret == -1) {
             dprintf(_socketServer, "Error: poll failed\n");
             break;
@@ -135,25 +135,31 @@ void ftp::Server::clientManagement()
                 dprintf(clientSocket, "Error: accept failed\n");
                 continue;
             }
-            _fds[nfds].fd = clientSocket;
-            _fds[nfds].events = POLLIN;
-            nfds += 1;
+            _fds[_nfds].fd = clientSocket;
+            _fds[_nfds].events = POLLIN;
+            _nfds += 1;
             addNewClient(clientSocket);
+            dprintf(clientSocket, "220 Service ready for new user.\r\n");
             std::cout << "New client connected : " << clientSocket << std::endl;
         }
-        handleClientInput(_fds, &nfds);
+        handleClientInput(_fds);
     }
 }
 
-void ftp::Server::handleClientDisconnection(pollfd* fds, int* nfds, int *i)
+void ftp::Server::handleClientDisconnection(pollfd* fds, int* nfds, int client_socket, bool isQuitCommand)
 {
-    std::cout << "Client disconnected : " << fds[*i].fd << std::endl;
-    close(fds[*i].fd);
-    removeClient(fds[*i].fd);
-    for (int j = (*i); j < *nfds - 1; j++)
-        fds[j] = fds[j + 1];
-    (*nfds)--;
-    (*i)--;
+    std::cout << (isQuitCommand ? "Client sent QUIT command: " : "Client disconnected: ") << client_socket << std::endl;
+    close(client_socket);
+    removeClient(client_socket);
+    for (int i = 0; i < *nfds; i++) {
+        if (fds[i].fd == client_socket) {
+            for (int j = i; j < *nfds - 1; j++) {
+                fds[j] = fds[j + 1];
+            }
+            (*nfds)--;
+            break;
+        }
+    }
 }
 
 
@@ -170,11 +176,11 @@ std::string ftp::Server::getArgs(char *buffer)
     return command.substr(command.find(" ") + 1);
 }
 
-void ftp::Server::handleClientInput(pollfd* fds, int* nfds)
+void ftp::Server::handleClientInput(pollfd* fds)
 {
-    ftp::CommandHandler commandHandler;
+    ftp::CommandHandler commandHandler(*this);
 
-    for (int i = 1; i < *nfds; i++) {
+    for (int i = 0; i < _nfds; i++) {
         if (fds[i].revents & POLLIN) {
             char buffer[1024] = {};
             ssize_t bytes = read(fds[i].fd, buffer, sizeof(buffer));
@@ -183,14 +189,13 @@ void ftp::Server::handleClientInput(pollfd* fds, int* nfds)
                 return;
             }
             if (bytes == 0) {
-                handleClientDisconnection(fds, nfds, &i);
+                handleClientDisconnection(fds, &_nfds, fds[i].fd, false);
             } else {
                 cleanBuffer(buffer);
                 std::string command = getCommand(buffer);
                 std::string args = getArgs(buffer);
                 std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *getClient(fds[i].fd));
                 if (cmd) {
-                    std::cout << "Command found" << std::endl;
                     cmd->execute(args, *getClient(fds[i].fd));
                 }
             }

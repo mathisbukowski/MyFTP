@@ -18,8 +18,8 @@ namespace ftp {
         ~Client();
         int getSocket() const;
         void setSocket(const int socket);
-        int getLoggedIn() const;
-        void setLoggedIn(const int logged_in);
+        bool getLoggedIn() const;
+        void setLoggedIn(const bool logged_in);
         int getDataSocket() const;
         void setDataSocket(const int data_socket);
         int getPassiveMode() const;
@@ -33,7 +33,7 @@ namespace ftp {
 
         protected:
             int _socket;
-            int _logged_in;
+            bool _logged_in;
             int _data_socket;
             int _passive_mode;
             sockaddr_in _data_addr;
