@@ -14,6 +14,5 @@ ftp::PwdCommand::PwdCommand()
 void ftp::PwdCommand::execute(std::string args, Client &client)
 {
     (void)args;
-    std::string dir = getcwd(NULL, 0);
-    dprintf(client.getSocket(), "257 \"%s\" created.\r\n", dir.c_str());
+    dprintf(client.getSocket(), "257 \"%s\" created.\r\n", client.getCwd().c_str());
 }
