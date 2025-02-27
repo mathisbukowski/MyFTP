@@ -17,6 +17,11 @@ SRC = src/main.cpp \
 		src/Command/Commands/NoopCommand.cpp \
 		src/Command/Commands/CwdCommand.cpp \
 		src/Command/Commands/CdupCommand.cpp \
+		src/Command/Commands/PortCommand.cpp \
+		src/Command/Commands/PasvCommand.cpp \
+		src/Command/Commands/ListCommand.cpp \
+		src/Command/Commands/RetrCommand.cpp \
+		src/Command/Commands/StorCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 

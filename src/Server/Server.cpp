@@ -49,6 +49,12 @@ sockaddr_in ftp::Server::getServerAddr() const
 void ftp::Server::addNewClient(int client_socket)
 {
     _clients.emplace_back(client_socket);
+    for (auto &client : _clients)
+        if (client.getSocket() == client_socket) {
+            client.setCwd(_rootPath);
+            client.setDataAddr(_serverAddr);
+            break;
+        }
 }
 
 ftp::Client *ftp::Server::getClient(int client_socket)

@@ -22,8 +22,8 @@ namespace ftp {
         void setLoggedIn(const bool logged_in);
         int getDataSocket() const;
         void setDataSocket(const int data_socket);
-        int getPassiveMode() const;
-        void setPassiveMode(const int passive_mode);
+        bool getPassiveMode() const;
+        void setPassiveMode(const bool passive_mode);
         sockaddr_in getDataAddr() const;
         void setDataAddr(const sockaddr_in& data_addr);
         void setUsername(const std::string& username);
@@ -35,7 +35,7 @@ namespace ftp {
             int _socket;
             bool _logged_in;
             int _data_socket;
-            int _passive_mode;
+            bool _passive_mode;
             sockaddr_in _data_addr;
             std::string _username;
             std::string _cwd;

@@ -33,6 +33,7 @@ namespace ftp {
 	class CdupCommand;
 	class HelpCommand;
 	class NoopCommand;
+	class PortCommand;
 
 	class ICommand {
 	public:
