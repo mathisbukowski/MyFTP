@@ -8,7 +8,7 @@
 #include "Client.hpp"
 
 ftp::Client::Client(int clientSocket)
-    : _socket(clientSocket), _logged_in(0), _data_socket(-1), _passive_mode(0), _data_addr({}), _username("")
+    : _socket(clientSocket), _logged_in(false), _data_socket(-1), _passive_mode(false), _data_addr({}), _username("")
 {
     char buffCwd[1024];
     getcwd(buffCwd, sizeof(buffCwd));
@@ -45,12 +45,12 @@ void ftp::Client::setDataSocket(const int data_socket)
     _data_socket = data_socket;
 }
 
-int ftp::Client::getPassiveMode() const
+bool ftp::Client::getPassiveMode() const
 {
     return _passive_mode;
 }
 
-void ftp::Client::setPassiveMode(const int passive_mode)
+void ftp::Client::setPassiveMode(const bool passive_mode)
 {
     _passive_mode = passive_mode;
 }
