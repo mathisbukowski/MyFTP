@@ -19,6 +19,7 @@ void ftp::PasvCommand::execute(std::string args, Client &client)
         return;
     }
     client.setPassiveMode(true);
+    client.setDataSocket(socket(AF_INET, SOCK_STREAM, 0));
     dprintf(client.getSocket(), "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d).\r\n",
             client.getDataAddr().sin_addr.s_addr & 0xFF,
             (client.getDataAddr().sin_addr.s_addr & 0xFF00) >> 8,

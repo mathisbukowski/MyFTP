@@ -21,6 +21,7 @@ void ftp::PortCommand::execute(std::string args, Client &client)
     std::string ip = ipAndPort[0] + "." + ipAndPort[1] + "." + ipAndPort[2] + "." + ipAndPort[3];
     int port = std::stoi(ipAndPort[4]) * 256 + std::stoi(ipAndPort[5]);
     client.setDataAddr(createAddr(ip, port));
+    client.setDataSocket(socket(AF_INET, SOCK_STREAM, 0));
     client.setPassiveMode(false);
     dprintf(client.getSocket(), "200 Command okay.\r\n");
 }

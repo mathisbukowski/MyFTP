@@ -38,7 +38,5 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
         write(client.getDataSocket(), buffer, file.gcount());
     }
     file.close();
-    close(client.getDataSocket());
-    client.setDataSocket(-1);
     dprintf(client.getSocket(), "226 Closing data connection.\r\n");
 }

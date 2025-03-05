@@ -23,7 +23,6 @@ void ftp::CdupCommand::execute(std::string args, Client &client)
         dprintf(client.getSocket(), "550 Failed to change directory.\r\n");
         return;
     }
-
     if (getcwd(buffCwd, sizeof(buffCwd)) == nullptr) {
         dprintf(client.getSocket(), "550 Failed to get current directory.\r\n");
         return;

@@ -10,7 +10,8 @@
 ftp::Server::Server(int port, std::string path)
 {
     _port = port;
-    _rootPath = path;
+    _rootPath = get_current_dir_name();
+    _rootPath += "/" + path;
     _socketServer = socket(AF_INET, SOCK_STREAM, 0);
     _serverAddr = {};
 }
@@ -131,7 +132,6 @@ void ftp::Server::clientManagement()
             dprintf(_socketServer, "Error: poll failed\n");
             break;
         }
-        std::cout << "Polling..." << std::endl;
         if (_fds[0].revents & POLLIN) {
             sockaddr_in serverAddr = this->getServerAddr();
             size_t serverAddrLen = sizeof(serverAddr);
@@ -156,7 +156,7 @@ void ftp::Server::handleClientDisconnection(pollfd* fds, int* nfds, int client_s
 {
     std::cout << (isQuitCommand ? "Client sent QUIT command: " : "Client disconnected: ") << client_socket << std::endl;
     close(client_socket);
-    removeClient(client_socket);
+    this->removeClient(client_socket);
     for (int i = 0; i < *nfds; i++) {
         if (fds[i].fd == client_socket) {
             for (int j = i; j < *nfds - 1; j++) {
@@ -190,19 +190,17 @@ void ftp::Server::handleClientInput(pollfd* fds)
         if (fds[i].revents & POLLIN) {
             char buffer[1024] = {};
             ssize_t bytes = read(fds[i].fd, buffer, sizeof(buffer));
-            if (bytes == -1) {
-                std::cout << "Error: read failed" << std::endl;
+            if (bytes == -1)
                 return;
-            }
             if (bytes == 0) {
-                handleClientDisconnection(fds, &_nfds, fds[i].fd, false);
+                this->handleClientDisconnection(fds, &_nfds, fds[i].fd, false);
             } else {
-                cleanBuffer(buffer);
+                this->cleanBuffer(buffer);
                 std::string command = getCommand(buffer);
                 std::string args = getArgs(buffer);
-                std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *getClient(fds[i].fd));
+                std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *this->getClient(fds[i].fd));
                 if (cmd) {
-                    cmd->execute(args, *getClient(fds[i].fd));
+                    cmd->execute(args, *this->getClient(fds[i].fd));
                 }
             }
         }
