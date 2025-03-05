@@ -11,7 +11,7 @@
 #include "../Client/Client.hpp"
 #include "../Handler/CommandHandler.hpp"
 #include <algorithm>
-#define MAX_CLIENTS 20
+#define MAX_CLIENTS 1024
 
 namespace ftp {
     class Server {
@@ -23,7 +23,7 @@ namespace ftp {
                 std::string _message;
         };
         public:
-            pollfd _fds[10];
+            pollfd _fds[MAX_CLIENTS];
             int _nfds;
             Server(int port, std::string path);
             ~Server();

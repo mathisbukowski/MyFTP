@@ -196,6 +196,8 @@ void ftp::Server::handleClientInput(pollfd* fds)
                 this->handleClientDisconnection(fds, &_nfds, fds[i].fd, false);
             } else {
                 this->cleanBuffer(buffer);
+                if ((buffer[0] = '\0'))
+                    continue;
                 std::string command = getCommand(buffer);
                 std::string args = getArgs(buffer);
                 std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *this->getClient(fds[i].fd));
