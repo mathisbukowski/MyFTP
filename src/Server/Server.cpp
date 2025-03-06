@@ -91,7 +91,7 @@ void ftp::Server::run()
     if (listen(_socketServer, 10) == -1)
         throw ServerError("Error: listen failed");
     std::cout << "Server started on port " << _port << std::endl;
-    clientManagement();
+    this->clientManagement();
 }
 
 int ftp::Server::process()
@@ -144,11 +144,11 @@ void ftp::Server::clientManagement()
             _fds[_nfds].fd = clientSocket;
             _fds[_nfds].events = POLLIN;
             _nfds += 1;
-            addNewClient(clientSocket);
+            this->addNewClient(clientSocket);
             dprintf(clientSocket, "220 Service ready for new user.\r\n");
             std::cout << "New client connected : " << clientSocket << std::endl;
         }
-        handleClientInput(_fds);
+        this->handleClientInput(_fds);
     }
 }
 
@@ -196,8 +196,8 @@ void ftp::Server::handleClientInput(pollfd* fds)
                 this->handleClientDisconnection(fds, &_nfds, fds[i].fd, false);
             } else {
                 this->cleanBuffer(buffer);
-                std::string command = getCommand(buffer);
-                std::string args = getArgs(buffer);
+                std::string command = this->getCommand(buffer);
+                std::string args = this->getArgs(buffer);
                 std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *this->getClient(fds[i].fd));
                 if (cmd) {
                     cmd->execute(args, *this->getClient(fds[i].fd));
