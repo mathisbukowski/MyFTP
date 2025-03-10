@@ -15,9 +15,8 @@ void ftp::PwdCommand::execute(std::string args, Client &client)
 {
     (void)args;
     if (!client.isLoggedIn()) {
-        dprintf(client.getSocket(), "530 Not logged in.\r\n");
+        client.sendCommandResponse(530);
         return;
     }
-    std::filesystem::path current = client.getCwd();
-    dprintf(client.getSocket(), "257 \"%s\"\r\n", current.c_str());
+    client.sendPwdResponse();
 }

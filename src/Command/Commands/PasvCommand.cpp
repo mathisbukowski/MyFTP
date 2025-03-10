@@ -12,19 +12,6 @@ ftp::PasvCommand::PasvCommand()
 
 }
 
-
-void ftp::PasvCommand::sendPassiveModeResponse(Client& client, sockaddr_in& data_address)
-{
-    in_addr address = data_address.sin_addr;
-    unsigned char *ip = reinterpret_cast<unsigned char *>(&address.s_addr);
-
-    int port = htons(data_address.sin_port);
-    int p1 = port / 256;
-    int p2 = port % 256;
-
-    dprintf(client.getSocket(), "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d).\r\n", ip[0], ip[1], ip[2], ip[3], p1, p2);
-}
-
 sockaddr_in ftp::PasvCommand::getDataAddress(Client& client, int data_socket)
 {
     sockaddr_in control;
@@ -48,7 +35,7 @@ sockaddr_in ftp::PasvCommand::getDataAddress(Client& client, int data_socket)
     }
     return data_address;
 }
-int ftp::PasvCommand::createDataSocket(Client& client)
+int ftp::PasvCommand::createDataSocket()
 {
     int data_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (data_socket == -1) {
@@ -60,29 +47,29 @@ int ftp::PasvCommand::createDataSocket(Client& client)
 void ftp::PasvCommand::execute(std::string args, Client& client)
 {
     if (!client.isLoggedIn()) {
-        sendResponse(client, "530 Not logged in.\r\n");
+        client.sendCustomResponse(530, "Not logged in.");
         return;
     }
     if (!args.empty()) {
-        sendResponse(client, "501 Syntax error in parameters or arguments.\r\n");
+        client.sendCommandResponse(501);
         return;
     }
     if (client.isPassiveMode()) {
-        sendResponse(client, "530 Already in passive mode.\r\n");
+        client.sendCommandResponse(503);
         return;
     }
     client.setPassiveMode(true);
-    int data_socket = createDataSocket(client);
+    int data_socket = createDataSocket();
     if (data_socket == -1) {
-        sendResponse(client, "530 Can't open data connection.\r\n");
+        client.sendCommandResponse(425);
         return;
     }
     client.setDataSocket(data_socket);
     sockaddr_in data_address = getDataAddress(client, data_socket);
     if (data_address.sin_port == 0) {
-        sendResponse(client, "530 Can't open data connection.\r\n");
+        client.sendCommandResponse(425);
         return;
     }
     client.setDataAddr(data_address);
-    sendPassiveModeResponse(client, data_address);
+    client.sendPasvResponse();
 }
