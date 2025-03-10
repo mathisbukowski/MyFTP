@@ -13,20 +13,20 @@ ftp::CwdCommand::CwdCommand()
 
 void ftp::CwdCommand::execute(std::string args, Client &client)
 {
-    std::string new_dir;
-    if (!client.getLoggedIn()) {
-        dprintf(client.getSocket(), "530 Please login with USER and PASS.\r\n");
+    if (!client.isLoggedIn()) {
+        dprintf(client.getSocket(), "530 Not logged in.\r\n");
         return;
     }
     if (args.empty()) {
         dprintf(client.getSocket(), "501 Syntax error in parameters or arguments.\r\n");
         return;
     }
-    if (chdir(args.c_str()) == -1) {
+    std::filesystem::path newPath = client.getCwd() / args;
+    newPath = weakly_canonical(newPath);
+    if (!exists(newPath) || !is_directory(newPath)) {
         dprintf(client.getSocket(), "550 Failed to change directory.\r\n");
         return;
     }
-    new_dir = getcwd(NULL, 1024);
-    client.setCwd(new_dir);
+    client.setCwd(newPath);
     dprintf(client.getSocket(), "250 Requested file action okay, completed.\r\n");
 }
