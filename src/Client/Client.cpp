@@ -79,3 +79,8 @@ void ftp::Client::sendPwdResponse()
     std::string message = "257 \"" + current + "\" created.\r\n";
     dprintf(this->getSocket(), "%s", message.c_str());
 }
+
+void ftp::Client::resetDataMode() {
+    setActiveMode(false);
+    setPassiveMode(false);
+}
