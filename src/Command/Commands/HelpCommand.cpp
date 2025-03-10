@@ -14,10 +14,6 @@ ftp::HelpCommand::HelpCommand()
 void ftp::HelpCommand::execute(std::string args, Client &client)
 {
     (void)args;
-    if (!client.getLoggedIn()) {
-        dprintf(client.getSocket(), "530 Please login with USER and PASS.\r\n");
-        return;
-    }
     dprintf(client.getSocket(), "214 The following commands are recognized.\r\n");
     dprintf(client.getSocket(), "USER PASS CWD CDUP QUIT PWD HELP NOOP\r\n");
     dprintf(client.getSocket(), "USER <SP> Username <CRLF> \r\n");
