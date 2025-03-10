@@ -11,6 +11,7 @@
 #include "../../include/ftp.hpp"
 #include <cstring>
 #include <filesystem>
+#include <map>
 
 namespace ftp {
     class Client {
@@ -33,6 +34,11 @@ namespace ftp {
         void setUsername(const std::string &username) { _username = username; }
         void setCwd(const std::filesystem::path &cwd) { _cwd = cwd; }
 
+        void sendPwdResponse();
+        void sendCustomResponse(int code, const std::string& custom_message);
+        void sendCommandResponse(int code);
+        void sendPasvResponse();
+
         protected:
             int _socket;
             bool _logged_in;
@@ -41,6 +47,7 @@ namespace ftp {
             sockaddr_in _data_addr;
             std::string _username;
             std::filesystem::path _cwd;
+            std::map<int, std::string> _commandResponses;
     };
 };
 

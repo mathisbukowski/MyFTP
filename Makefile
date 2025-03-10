@@ -17,6 +17,7 @@ SRC = src/main.cpp \
 		src/Command/Commands/CwdCommand.cpp \
 		src/Command/Commands/CdupCommand.cpp \
 		src/Command/Commands/PwdCommand.cpp \
+		src/Command/Commands/PasvCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 

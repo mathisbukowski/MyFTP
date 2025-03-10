@@ -14,26 +14,26 @@ ftp::PasswordCommand::PasswordCommand()
 void ftp::PasswordCommand::execute(std::string args, Client &client)
 {
     if (client.isLoggedIn()) {
-        dprintf(client.getSocket(), "530 Already logged in.\r\n");
+        client.sendCustomResponse(530, "Already logged in.");
         return;
     }
     if (client.getUsername().empty()) {
-        dprintf(client.getSocket(), "503 Bad sequence of commands.\r\n");
+        client.sendCommandResponse(332);
         return;
     }
     if (client.getUsername() == "Anonymous") {
         if (args.empty()) {
-            dprintf(client.getSocket(), "230 User logged in, proceed.\r\n");
+            client.sendCommandResponse(230);
             client.setLoggedIn(true);
             return;
         }
-        dprintf(client.getSocket(), "530 Anonymous login doest not require a password.\r\n");
+        client.sendCustomResponse(530, "Anonymous user cannot have a password.");
         return;
     }
     if (args.empty()) {
-        dprintf(client.getSocket(), "501 Syntax error: missing parameter or argument.\r\n");
+        client.sendCommandResponse(501);
         return;
     }
     client.setLoggedIn(true);
-    dprintf(client.getSocket(), "230 User logged in, proceed.\r\n");
+    client.sendCommandResponse(230);
 }

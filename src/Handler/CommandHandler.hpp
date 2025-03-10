@@ -18,6 +18,7 @@
 #include "../Command/Commands/QuitCommand.hpp"
 #include "../Command/Commands/HelpCommand.hpp"
 #include "../Command/Commands/NoopCommand.hpp"
+#include "../Command/Commands/PasvCommand.hpp"
 #include <map>
 #include <memory>
 #include <functional>

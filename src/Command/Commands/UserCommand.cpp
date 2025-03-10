@@ -15,20 +15,20 @@ ftp::UserCommand::UserCommand()
 void ftp::UserCommand::execute(std::string args, Client &client)
 {
     if (args.empty()) {
-        dprintf(client.getSocket(), "501 Syntax error in parameters or arguments.\r\n");
+        client.sendCommandResponse(501);
         return;
     }
     if (client.isLoggedIn()) {
-        dprintf(client.getSocket(), "530 Already logged in.\r\n");
+        client.sendCustomResponse(530, "Already logged in.");
         return;
     }
     if (client.getUsername().empty()) {
         client.setUsername(args);
-        dprintf(client.getSocket(), "331 User name okay, need password.\r\n");
+        client.sendCommandResponse(331);
     } else if (client.getUsername() == args) {
-        dprintf(client.getSocket(), "230 User logged in, proceed.\r\n");
+        client.sendCommandResponse(230);
         client.setLoggedIn(true);
     } else {
-        dprintf(client.getSocket(), "530 Authentication failed.\r\n");
+        client.sendCustomResponse(530, "Authentication failed.");
     }
 }
