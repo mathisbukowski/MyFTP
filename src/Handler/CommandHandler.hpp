@@ -32,7 +32,7 @@ namespace ftp {
     public:
         CommandHandler(Server &server);
         ~CommandHandler();
-        std::unique_ptr<ftp::ICommand> handleCommand(std::string command, Client &client);
+        std::unique_ptr<ftp::ICommand> handleCommand(std::string command);
     protected:
     private:
         Server &_server;

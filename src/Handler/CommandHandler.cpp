@@ -31,7 +31,7 @@ ftp::CommandHandler::~CommandHandler()
 {
 }
 
-std::unique_ptr<ftp::ICommand> ftp::CommandHandler::handleCommand(std::string command, Client &client)
+std::unique_ptr<ftp::ICommand> ftp::CommandHandler::handleCommand(std::string command)
 {
     for (auto &cmd : _commands) {
         if (cmd.first == command) {
