@@ -15,5 +15,5 @@ void ftp::QuitCommand::execute(std::string args, Client &client)
 {
     (void)args;
     dprintf(client.getSocket(), "221 Service closing control connection.\r\n");
-    _server.handleClientDisconnection(client.getSocket(), true);
+    _server.handleClientDisconnection(client.getSocket());
 }
