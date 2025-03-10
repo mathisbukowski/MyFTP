@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2025
-** NWP-400
-** File description:
-** Server
-*/
-
 #include "Server.hpp"
 
 ftp::Server::Server(int port, std::string path)
@@ -16,7 +9,6 @@ ftp::Server::Server(int port, std::string path)
     _serverAddr = {};
     _fds.reserve(MAX_CLIENTS);
 }
-
 
 int ftp::Server::getPort() const
 {
@@ -55,6 +47,7 @@ void ftp::Server::addNewClient(int client_socket, sockaddr_in clientAddr)
         if (client.getSocket() == client_socket) {
             client.setCwd(_rootPath);
             client.setDataAddr(clientAddr);
+            client.setUsername()
             break;
         }
 }
@@ -152,15 +145,13 @@ void ftp::Server::clientManagement()
             _nfds += 1;
             this->addNewClient(clientSocket, clientAddr);
             dprintf(clientSocket, "220 Service ready for new user.\r\n");
-            std::cout << "New client connected : " << clientSocket << std::endl;
         }
         this->handleClientInput();
     }
 }
 
-void ftp::Server::handleClientDisconnection(int client_socket, bool isQuitCommand)
+void ftp::Server::handleClientDisconnection(int client_socket)
 {
-    std::cout << (isQuitCommand ? "Client sent QUIT command: " : "Client disconnected: ") << client_socket << std::endl;
     close(client_socket);
     this->removeClient(client_socket);
     _fds.erase(std::remove_if(_fds.begin(), _fds.end(),
@@ -169,18 +160,24 @@ void ftp::Server::handleClientDisconnection(int client_socket, bool isQuitComman
     _nfds = _fds.size();
 }
 
-
-std::string ftp::Server::getCommand(char* buffer)
+std::string ftp::Server::getCommand(const char* buffer)
 {
     std::string command = buffer;
-    return command.substr(0, command.find(" "));
+    size_t pos = command.find(' ');
+    if (pos == std::string::npos) {
+        return command;
+    }
+    return command.substr(0, pos);
 }
 
-
-std::string ftp::Server::getArgs(char *buffer)
+std::string ftp::Server::getArgs(const char *buffer)
 {
     std::string command = buffer;
-    return command.substr(command.find(" ") + 1);
+    size_t pos = command.find(' ');
+    if (pos == std::string::npos || pos == command.length() - 1) {
+        return "";
+    }
+    return command.substr(pos + 1);
 }
 
 void ftp::Server::handleClientInput()
@@ -194,30 +191,28 @@ void ftp::Server::handleClientInput()
             if (bytes == -1)
                 return;
             if (bytes == 0) {
-                this->handleClientDisconnection(_fds[i].fd, false);
+                this->handleClientDisconnection(_fds[i].fd);
             } else {
-                this->cleanBuffer(buffer);
-                std::string command = this->getCommand(buffer);
-                std::string args = this->getArgs(buffer);
-                std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(command, *this->getClient(_fds[i].fd));
+                this->handleBuffer(buffer);
+                std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(this->getCommand(buffer), *this->getClient(_fds[i].fd));
                 if (cmd) {
-                    cmd->execute(args, *this->getClient(_fds[i].fd));
+                    cmd->execute(this->getArgs(buffer), *this->getClient(_fds[i].fd));
+                } else {
+                    dprintf(this->getClient(_fds[i].fd)->getSocket(), "500 Unknown command.\r\n");
                 }
             }
         }
     }
 }
 
-void ftp::Server::cleanBuffer(char *buffer)
+void ftp::Server::handleBuffer(char *buffer)
 {
     if (!buffer)
         return;
-    for (int i = 0; buffer[i]; i++) {
-        if (buffer[i] == '\n' || buffer[i] == '\r') {
+    for (int i = 0; buffer[i]; i++)
+        if (buffer[i] == '\r' || buffer[i] == '\n')
             buffer[i] = '\0';
-            break;
-        }
-    }
+    std::transform(buffer, buffer + strlen(buffer), buffer, ::tolower);
 }
 
 ftp::Server::~Server()

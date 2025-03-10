@@ -11,6 +11,7 @@
 #include "../Client/Client.hpp"
 #include "../Handler/CommandHandler.hpp"
 #include <algorithm>
+#include <cctype>
 #define MAX_CLIENTS 1024
 
 namespace ftp {
@@ -40,13 +41,13 @@ namespace ftp {
             void removeClient(int client_socket);
             int checkPort(int port);
             int checkPath(std::string path);
-            void handleClientDisconnection(int client_socket, bool isQuitCommand);
+            void handleClientDisconnection(int client_socket);
             void handleClientInput();
             void setServerAddr(sockaddr_in serverAddr);
             sockaddr_in getServerAddr() const;
-            std::string getCommand(char *buffer);
-            std::string getArgs(char *buffer);
-            void cleanBuffer(char *buffer);
+            std::string getArgs(const char *buffer);
+            std::string getCommand(const char* buffer);
+            void handleBuffer(char *buffer);
 
         protected:
             std::vector<Client> _clients;
