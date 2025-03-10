@@ -17,6 +17,9 @@ namespace ftp {
         PasvCommand();
         ~PasvCommand() = default;
         void execute(std::string args, Client &client) override;
+        void sendPassiveModeResponse(Client& client, sockaddr_in& data_address);
+        sockaddr_in getDataAddress(Client& client, int data_socket);
+        int createDataSocket(Client& client);
     };
 }
 

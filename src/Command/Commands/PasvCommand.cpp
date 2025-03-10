@@ -13,7 +13,7 @@ ftp::PasvCommand::PasvCommand()
 }
 
 
-void sendPassiveModeResponse(Client& client, sockaddr_in& data_address)
+void ftp::PasvCommand::sendPassiveModeResponse(Client& client, sockaddr_in& data_address)
 {
     in_addr address = data_address.sin_addr;
     unsigned char *ip = reinterpret_cast<unsigned char *>(&address.s_addr);
@@ -25,7 +25,7 @@ void sendPassiveModeResponse(Client& client, sockaddr_in& data_address)
     dprintf(client.getSocket(), "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d).\r\n", ip[0], ip[1], ip[2], ip[3], p1, p2);
 }
 
-sockaddr_in getDataAddress(Client& client, int data_socket)
+sockaddr_in ftp::PasvCommand::getDataAddress(Client& client, int data_socket)
 {
     sockaddr_in control;
     socklen_t control_len = sizeof(control);
@@ -48,18 +48,13 @@ sockaddr_in getDataAddress(Client& client, int data_socket)
     }
     return data_address;
 }
-int createDataSocket(Client& client)
+int ftp::PasvCommand::createDataSocket(Client& client)
 {
     int data_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (data_socket == -1) {
         return -1;
     }
     return data_socket;
-}
-
-void sendResponse(Client& client, const char* message)
-{
-    dprintf(client.getSocket(), message);
 }
 
 void ftp::PasvCommand::execute(std::string args, Client& client)
