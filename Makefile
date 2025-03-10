@@ -9,7 +9,6 @@ SRC = src/main.cpp \
 		src/Server/Server.cpp \
 		src/Client/Client.cpp \
 		src/Command/ACommand.cpp \
-		src/Command/Commands/PwdCommand.cpp \
 		src/Command/Commands/UserCommand.cpp \
 		src/Command/Commands/PasswordCommand.cpp \
 		src/Command/Commands/QuitCommand.cpp \
@@ -17,11 +16,7 @@ SRC = src/main.cpp \
 		src/Command/Commands/NoopCommand.cpp \
 		src/Command/Commands/CwdCommand.cpp \
 		src/Command/Commands/CdupCommand.cpp \
-		src/Command/Commands/PortCommand.cpp \
-		src/Command/Commands/PasvCommand.cpp \
-		src/Command/Commands/ListCommand.cpp \
-		src/Command/Commands/RetrCommand.cpp \
-		src/Command/Commands/StorCommand.cpp \
+		src/Command/Commands/PwdCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 

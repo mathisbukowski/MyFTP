@@ -19,11 +19,6 @@ ftp::CommandHandler::CommandHandler(Server &server) : _server(server)
         {"cdup", []() {return std::make_unique<CdupCommand>(); }},
         {"help", []() {return std::make_unique<HelpCommand>(); }},
         {"noop", []() {return std::make_unique<NoopCommand>(); }},
-        {"port", []() {return std::make_unique<PortCommand>(); }},
-        {"pasv", []() {return std::make_unique<PasvCommand>(); }},
-        {"retr", []() {return std::make_unique<RetrCommand>(); }},
-        {"stor", []() {return std::make_unique<StorCommand>(); }},
-        {"list", []() {return std::make_unique<ListCommand>(); }},
     };
 }
 

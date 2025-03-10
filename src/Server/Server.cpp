@@ -47,7 +47,6 @@ void ftp::Server::addNewClient(int client_socket, sockaddr_in clientAddr)
         if (client.getSocket() == client_socket) {
             client.setCwd(_rootPath);
             client.setDataAddr(clientAddr);
-            client.setUsername()
             break;
         }
 }
@@ -164,10 +163,11 @@ std::string ftp::Server::getCommand(const char* buffer)
 {
     std::string command = buffer;
     size_t pos = command.find(' ');
-    if (pos == std::string::npos) {
-        return command;
+    if (pos != std::string::npos) {
+        command = command.substr(0, pos);
     }
-    return command.substr(0, pos);
+    std::transform(command.begin(), command.end(), command.begin(), ::tolower);
+    return command;
 }
 
 std::string ftp::Server::getArgs(const char *buffer)
@@ -177,7 +177,11 @@ std::string ftp::Server::getArgs(const char *buffer)
     if (pos == std::string::npos || pos == command.length() - 1) {
         return "";
     }
-    return command.substr(pos + 1);
+    std::string args = command.substr(pos + 1);
+    if (args.front() == '"' && args.back() == '"') {
+        args = args.substr(1, args.size() - 2);
+    }
+    return args;
 }
 
 void ftp::Server::handleClientInput()
@@ -194,6 +198,8 @@ void ftp::Server::handleClientInput()
                 this->handleClientDisconnection(_fds[i].fd);
             } else {
                 this->handleBuffer(buffer);
+                std::cout << "Command: " << this->getCommand(buffer) << "$" << std::endl;
+                std::cout << "Args: " << this->getArgs(buffer) << "$" << std::endl;
                 std::unique_ptr<ICommand> cmd = commandHandler.handleCommand(this->getCommand(buffer));
                 if (cmd) {
                     cmd->execute(this->getArgs(buffer), *this->getClient(_fds[i].fd));
@@ -209,10 +215,25 @@ void ftp::Server::handleBuffer(char *buffer)
 {
     if (!buffer)
         return;
-    for (int i = 0; buffer[i]; i++)
-        if (buffer[i] == '\r' || buffer[i] == '\n')
-            buffer[i] = '\0';
-    std::transform(buffer, buffer + strlen(buffer), buffer, ::tolower);
+    while (*buffer == ' ' || *buffer == '\t')
+        buffer++;
+    char *src = buffer, *dst = buffer;
+    bool lastWasSpace = false;
+    while (*src) {
+        if (*src == ' ' || *src == '\t') {
+            if (!lastWasSpace) {
+                *dst++ = ' ';
+                lastWasSpace = true;
+            }
+        } else if (*src != '\r' && *src != '\n') {
+            *dst++ = *src;
+            lastWasSpace = false;
+        }
+        src++;
+    }
+    if (dst > buffer && *(dst - 1) == ' ')
+        dst--;
+    *dst = '\0';
 }
 
 ftp::Server::~Server()
