@@ -21,7 +21,7 @@ void ftp::CdupCommand::execute(std::string args, Client &client)
     std::filesystem::path current = client.getCwd();
 
     if (current == "/") {
-        client.sendCustomResponse(550, "Aleready at root directory.");
+        client.sendCustomResponse(550, "Already at root directory.");
         return;
     }
     std::filesystem::path parent = current.parent_path();

@@ -21,12 +21,12 @@ void ftp::CwdCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(501);
         return;
     }
-    std::filesystem::path newPath = client.getCwd() / args;
-    newPath = weakly_canonical(newPath);
-    if (!exists(newPath) || !is_directory(newPath)) {
-      client.sendCommandResponse(550);
+    std::filesystem::path newPath = client.getRootPath() / args;
+    newPath = std::filesystem::weakly_canonical(newPath);
+    if (!std::filesystem::exists(newPath) || !std::filesystem::is_directory(newPath)) {
+        client.sendCommandResponse(550);
         return;
     }
-    client.setCwd(newPath);
+    client.setCwd("/" + args);
     client.sendCommandResponse(250);
 }
