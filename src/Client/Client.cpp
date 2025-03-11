@@ -72,3 +72,8 @@ void ftp::Client::sendPasvResponse() {
             ip[0], ip[1], ip[2], ip[3], p1, p2);
     dprintf(this->getSocket(), "%s", buffer);
 }
+
+void ftp::Client::resetDataMode() {
+    setActiveMode(false);
+    setPassiveMode(false);
+}

@@ -38,6 +38,7 @@ namespace ftp {
         void setRootPath(const std::filesystem::path &root_path) { _root_path = root_path; }
         void setActiveMode(bool active_mode) { _active_mode = active_mode; }
 
+        void resetDataMode();
         void sendCustomResponse(int code, const std::string& custom_message);
         void sendCommandResponse(int code);
         void sendPasvResponse();

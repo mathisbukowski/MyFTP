@@ -19,6 +19,7 @@ SRC = src/main.cpp \
 		src/Command/Commands/PwdCommand.cpp \
 		src/Command/Commands/PasvCommand.cpp \
 		src/Command/Commands/PortCommand.cpp \
+		src/Command/Commands/StorCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 
@@ -40,3 +41,4 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+

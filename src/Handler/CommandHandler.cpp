@@ -21,6 +21,7 @@ ftp::CommandHandler::CommandHandler(Server &server) : _server(server)
         {"noop", []() {return std::make_unique<NoopCommand>(); }},
         {"pasv", []() { return std::make_unique<PasvCommand>(); }},
         {"port", []() {return std::make_unique<PortCommand>(); }},
+        {"stor", []() { return std::make_unique<StorCommand>(); }},
     };
 }
 
