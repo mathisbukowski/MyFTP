@@ -27,6 +27,11 @@ void ftp::CwdCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(550);
         return;
     }
-    client.setCwd("/" + args);
+    std::filesystem::path virtualPath = std::filesystem::weakly_canonical(client.getCwd() / args);
+    if (virtualPath == client.getRootPath()) {
+        client.setCwd("/");
+    } else {
+        client.setCwd(virtualPath.string());
+    }
     client.sendCommandResponse(250);
 }
