@@ -29,11 +29,7 @@ void ftp::PasswordCommand::execute(std::string args, Client &client)
         }
         client.sendCustomResponse(530, "Anonymous user cannot have a password.");
         return;
+    } else {
+        client.sendCustomResponse(530, "User cannot be authenticated.");
     }
-    if (args.empty()) {
-        client.sendCommandResponse(501);
-        return;
-    }
-    client.setLoggedIn(true);
-    client.sendCommandResponse(230);
 }
