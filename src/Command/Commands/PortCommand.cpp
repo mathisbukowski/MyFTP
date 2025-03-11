@@ -21,5 +21,42 @@ void ftp::PortCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(503);
         return;
     }
-    std::vector
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(args);
+    while (std::getline(tokenStream, token, ',')) {
+        tokens.push_back(token);
+    }
+    if (tokens.size() != 6) {
+        client.sendCommandResponse(501);
+        return;
+    }
+    std::string ip = tokens[0] + "." + tokens[1] + "." + tokens[2] + "." + tokens[3];
+    int port = std::stoi(tokens[4]) * 256 + std::stoi(tokens[5]);
+    sockaddr_in dataAddr;
+    dataAddr.sin_family = AF_INET;
+    dataAddr.sin_port = htons(port);
+    if (inet_pton(AF_INET, ip.c_str(), &dataAddr.sin_addr) <= 0) {
+        client.sendCommandResponse(501);
+        return;
+    }
+    client.setDataAddr(dataAddr);
+    client.setActiveMode(true);
+    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        client.sendCommandResponse(425);
+        return;
+    }
+    if (bind(serverSocket, (sockaddr *)&dataAddr, sizeof(dataAddr)) < 0) {
+        close(serverSocket);
+        client.sendCommandResponse(425);
+        return;
+    }
+    if (listen(serverSocket, 1) < 0) {
+        close(serverSocket);
+        client.sendCommandResponse(425);
+        return;
+    }
+    client.setDataSocket(serverSocket);
+    client.sendCommandResponse(200);
 }

@@ -12,7 +12,7 @@
 #include "../../Client/Client.hpp"
 
 namespace ftp {
-    class PortCommand
+    class PortCommand : public ACommand
     {
     public:
         PortCommand();
