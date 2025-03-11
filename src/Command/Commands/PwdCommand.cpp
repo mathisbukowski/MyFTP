@@ -18,5 +18,5 @@ void ftp::PwdCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(530);
         return;
     }
-    client.sendPwdResponse();
+    client.sendCustomResponse(257, "\"" + client.getCwd().string() + "\" is the current directory.");
 }
