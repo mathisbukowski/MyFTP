@@ -19,6 +19,7 @@
 #include "../Command/Commands/HelpCommand.hpp"
 #include "../Command/Commands/NoopCommand.hpp"
 #include "../Command/Commands/PasvCommand.hpp"
+#include "../Command/Commands/PortCommand.hpp"
 #include "../Command/Commands/StorCommand.hpp"
 #include <map>
 #include <memory>

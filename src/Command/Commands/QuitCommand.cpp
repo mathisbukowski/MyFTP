@@ -13,7 +13,10 @@ ftp::QuitCommand::QuitCommand(Server &server) : _server(server)
 
 void ftp::QuitCommand::execute(std::string args, Client &client)
 {
-    (void)args;
+    if (!args.empty()) {
+        client.sendCommandResponse(501);
+        return;
+    }
     client.sendCommandResponse(221);
     _server.handleClientDisconnection(client.getSocket());
 }

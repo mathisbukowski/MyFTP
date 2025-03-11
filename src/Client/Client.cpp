@@ -8,7 +8,7 @@
 #include "Client.hpp"
 
 ftp::Client::Client(int clientSocket)
-    : _socket(clientSocket), _logged_in(false), _data_socket(-1), _passive_mode(false), _data_addr({})
+    : _socket(clientSocket), _logged_in(false), _data_socket(-1), _passive_mode(false), _active_mode(false), _data_addr({}), _cwd("/")
 {
     _commandResponses = {
         {120, "Service ready in nnn minutes."},
@@ -71,13 +71,6 @@ void ftp::Client::sendPasvResponse() {
             "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d).\r\n",
             ip[0], ip[1], ip[2], ip[3], p1, p2);
     dprintf(this->getSocket(), "%s", buffer);
-}
-
-void ftp::Client::sendPwdResponse()
-{
-    std::string current = this->getCwd();
-    std::string message = "257 \"" + current + "\" created.\r\n";
-    dprintf(this->getSocket(), "%s", message.c_str());
 }
 
 void ftp::Client::resetDataMode() {
