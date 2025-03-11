@@ -13,7 +13,10 @@ ftp::CdupCommand::CdupCommand()
 
 void ftp::CdupCommand::execute(std::string args, Client &client)
 {
-    (void)args;
+    if (!args.empty()) {
+        client.sendCommandResponse(501);
+        return;
+    }
     if (!client.isLoggedIn()) {
         client.sendCommandResponse(530);
         return;
