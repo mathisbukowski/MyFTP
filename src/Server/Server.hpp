@@ -16,20 +16,12 @@
 
 namespace ftp {
     class Server {
-        class ServerError : public std::exception {
-            public:
-                ServerError(std::string const &message) : _message(message) {};
-                const char *what() const noexcept override { return _message.c_str(); };
-            private:
-                std::string _message;
-        };
         public:
             std::vector<pollfd> _fds;
             size_t _nfds;
             Server(int port, std::string path);
             ~Server();
-            int process();
-            void run();
+            int run();
             void clientManagement();
             void stop();
             void setPort(int port);
@@ -39,8 +31,6 @@ namespace ftp {
             void addNewClient(int client_socket, sockaddr_in clientAddr);
             Client *getClient(int client_socket);
             void removeClient(int client_socket);
-            int checkPort(int port);
-            int checkPath(std::string path);
             void handleClientDisconnection(int client_socket);
             void handleClientInput();
             void setServerAddr(sockaddr_in serverAddr);

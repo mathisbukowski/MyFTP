@@ -13,10 +13,13 @@ ftp::PwdCommand::PwdCommand()
 
 void ftp::PwdCommand::execute(std::string args, Client &client)
 {
-    (void)args;
+    if (!args.empty()) {
+        client.sendCommandResponse(501);
+        return;
+    }
     if (!client.isLoggedIn()) {
         client.sendCommandResponse(530);
         return;
     }
-    client.sendPwdResponse();
+    client.sendCustomResponse(257, "\"" + client.getCwd().string() + "\" is the current directory.");
 }

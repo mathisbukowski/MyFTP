@@ -3,8 +3,7 @@
 ftp::Server::Server(int port, std::string path)
 {
     _port = port;
-    _rootPath = get_current_dir_name();
-    _rootPath += "/" + path;
+    _rootPath = path;
     _socketServer = socket(AF_INET, SOCK_STREAM, 0);
     _serverAddr = {};
     _fds.reserve(MAX_CLIENTS);
@@ -45,7 +44,7 @@ void ftp::Server::addNewClient(int client_socket, sockaddr_in clientAddr)
     _clients.emplace_back(client_socket);
     for (auto &client : _clients)
         if (client.getSocket() == client_socket) {
-            client.setCwd(_rootPath);
+            client.setRootPath(_rootPath);
             client.setDataAddr(clientAddr);
             break;
         }
@@ -59,48 +58,27 @@ ftp::Client *ftp::Server::getClient(int client_socket)
     return nullptr;
 }
 
-int ftp::Server::checkPath(std::string path)
+int ftp::Server::run()
 {
-    if (access(path.c_str(), F_OK) == -1)
-        return 84;
-    return 0;
-}
-
-int ftp::Server::checkPort(int port)
-{
-    if (port <= 0 || port > 65535)
-        return 84;
-    return 0;
-}
-
-void ftp::Server::run()
-{
-    if (_socketServer == -1)
-        throw ServerError("Error: Invalid socket.");
-    if (checkPath(_rootPath) == 84)
-        throw ServerError("Error: Invalid root path.");
-    if (checkPort(_port) == 84)
-        throw ServerError("Error: Invalid port.");
-    if (inet_pton(AF_INET, LOCALHOST, &_serverAddr.sin_addr) != 1)
-        throw ServerError("Error: Invalid server address.");
-    _serverAddr.sin_family = AF_INET;
-    _serverAddr.sin_port = htons(_port);
-    if (bind(_socketServer, (sockaddr *)&_serverAddr, sizeof(_serverAddr)) == -1)
-        throw ServerError("Error: bind failed");
-    if (listen(_socketServer, MAX_CLIENTS) == -1)
-        throw ServerError("Error: listen failed");
-    std::cout << "Server started on port " << _port << std::endl;
-    this->clientManagement();
-}
-
-int ftp::Server::process()
-{
-    try {
-        this->run();
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
+    if (_socketServer == -1){
+        perror("socket");
         return 84;
     }
+    if (inet_pton(AF_INET, LOCALHOST, &_serverAddr.sin_addr) != 1){
+        perror("inet_pton");
+        return 84;
+    }
+    _serverAddr.sin_family = AF_INET;
+    _serverAddr.sin_port = htons(_port);
+    if (bind(_socketServer, (sockaddr *)&_serverAddr, sizeof(_serverAddr)) == -1) {
+        perror("bind");
+        return 84;
+    }
+    if (listen(_socketServer, MAX_CLIENTS) == -1){
+        perror("listen");
+        return 84;
+    }
+    this->clientManagement();
     return 0;
 }
 
@@ -126,20 +104,16 @@ void ftp::Server::clientManagement()
     _nfds = 1;
     while (1) {
         ret = poll(_fds.data(), _nfds, -1);
-        if (ret == -1) {
-            dprintf(_socketServer, "Error: poll failed\n");
+        if (ret == -1)
             break;
-        }
         if (_fds[0].revents & POLLIN) {
             sockaddr_in clientAddr = {};
             socklen_t clientAddrLen = sizeof(clientAddr);
             const int clientSocket = accept(_socketServer,
                 reinterpret_cast<struct sockaddr *>(&clientAddr),
                 &clientAddrLen);
-            if (clientSocket == -1) {
-                std::cerr << "Error: accept failed" << std::endl;
+            if (clientSocket == -1)
                 continue;
-            }
             _fds.push_back({ clientSocket, POLLIN, 0 });
             _nfds += 1;
             this->addNewClient(clientSocket, clientAddr);

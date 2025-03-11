@@ -13,7 +13,10 @@ ftp::CdupCommand::CdupCommand()
 
 void ftp::CdupCommand::execute(std::string args, Client &client)
 {
-    (void)args;
+    if (!args.empty()) {
+        client.sendCommandResponse(501);
+        return;
+    }
     if (!client.isLoggedIn()) {
         client.sendCommandResponse(530);
         return;
@@ -21,7 +24,7 @@ void ftp::CdupCommand::execute(std::string args, Client &client)
     std::filesystem::path current = client.getCwd();
 
     if (current == "/") {
-        client.sendCustomResponse(550, "Aleready at root directory.");
+        client.sendCustomResponse(550, "Already at root directory.");
         return;
     }
     std::filesystem::path parent = current.parent_path();
