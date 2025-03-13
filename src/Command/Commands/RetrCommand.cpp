@@ -43,6 +43,7 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
     pid_t pid = fork();
     if (pid < 0) {
         client.sendCustomResponse(450, "Fork failed.");
+        client.resetDataMode();
     } else if (pid == 0) {
         readAndWriteDataInClient(connectionSocket, file, client);
         file.close();
