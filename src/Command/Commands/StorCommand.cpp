@@ -55,11 +55,11 @@ void ftp::StorCommand::execute(std::string args, Client &client)
         file.close();
         close(connectionSocket);
         close(client.getDataSocket());
-        client.resetDataMode();
         _exit(0);
     } else {
         close(connectionSocket);
         close(client.getDataSocket());
         waitpid(pid, nullptr, 0);
-    }
+    } 
+    client.resetDataMode();
 }
