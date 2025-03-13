@@ -42,20 +42,9 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
     }
     pid_t pid = fork();
     if (pid < 0) {
-        client.sendCommandResponse(550);
-        return;
+        client.sendCustomResponse(450, "Fork failed.");
     } else if (pid == 0) {
-        char buffer[4096];
-        while (file.read(buffer, sizeof(buffer)) || file.gcount() > 0) {
-            ssize_t bytesRead = file.gcount();
-            if (bytesRead > 0) {
-                ssize_t bytesWritten = write(connectionSocket, buffer, bytesRead);
-                if (bytesWritten < 0) {
-                    client.sendCommandResponse(450);
-                    break;
-                }
-            }
-        }
+        readAndWriteDataInClient(connectionSocket, file, client);
         file.close();
         close(connectionSocket);
         close(client.getDataSocket());

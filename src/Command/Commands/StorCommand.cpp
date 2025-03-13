@@ -41,16 +41,8 @@ void ftp::StorCommand::execute(std::string args, Client &client)
     pid_t pid = fork();
     if (pid < 0) {
         client.sendCustomResponse(450, "Fork failed.");
-        return;
     } else if (pid == 0) {
-        char buffer[4096];
-        ssize_t bytesRead;
-        while ((bytesRead = read(connectionSocket, buffer, sizeof(buffer))) > 0) {
-            file.write(buffer, bytesRead);
-        }
-        if (bytesRead < 0) {
-            client.sendCommandResponse(450);
-        }
+        readAndWriteDataInServer(connectionSocket, file, client);
         file.close();
         close(connectionSocket);
         close(client.getDataSocket());

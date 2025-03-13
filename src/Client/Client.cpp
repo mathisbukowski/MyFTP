@@ -25,6 +25,7 @@ ftp::Client::Client(int clientSocket)
         {332, "Need account for login."},
         {350, "Requested file action pending further information."},
         {425, "Can't open data connection."},
+        {426, "Connection closed; transfer aborted."},
         {450, "Requested file action not taken. File unavailable."},
         {500, "Unknown Command."},
         {501, "Syntax error in parameters or arguments."},
