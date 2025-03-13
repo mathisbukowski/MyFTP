@@ -21,17 +21,20 @@ void ftp::CwdCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(501);
         return;
     }
-    std::filesystem::path newPath = client.getRootPath() / args;
-    newPath = std::filesystem::weakly_canonical(newPath);
-    if (!std::filesystem::exists(newPath) || !std::filesystem::is_directory(newPath)) {
+    std::filesystem::path newCwd = client.getCwd() / args;
+    std::filesystem::path newRootPath = client.getRootPath() / args;
+    newCwd = std::filesystem::weakly_canonical(newCwd);
+    newRootPath = std::filesystem::weakly_canonical(newRootPath); 
+
+    if (newRootPath.string().find(client.getRootDir().string()) != 0) {
+        client.sendCustomResponse(550, "Already at root directory.");
+        return;
+    }
+    if (!std::filesystem::exists(newRootPath) || !std::filesystem::is_directory(newRootPath)) {
         client.sendCommandResponse(550);
         return;
     }
-    std::filesystem::path virtualPath = std::filesystem::weakly_canonical(client.getCwd() / args);
-    if (virtualPath == client.getRootPath()) {
-        client.setCwd("/");
-    } else {
-        client.setCwd(virtualPath.string());
-    }
+    client.setCwd(newCwd);
+    client.setRootPath(newRootPath);
     client.sendCommandResponse(250);
-}
+}   

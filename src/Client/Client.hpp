@@ -27,6 +27,7 @@ namespace ftp {
         const std::string &getUsername() const { return _username; }
         const std::filesystem::path &getCwd() const { return _cwd; }
         const std::filesystem::path &getRootPath() const { return _root_path; }
+        const std::filesystem::path &getRootDir() const { return _rootDir; }
 
         void setSocket(int socket) { _socket = socket; }
         void setLoggedIn(bool logged_in) { _logged_in = logged_in; }
@@ -37,6 +38,7 @@ namespace ftp {
         void setCwd(const std::filesystem::path &cwd) { _cwd = cwd; }
         void setRootPath(const std::filesystem::path &root_path) { _root_path = root_path; }
         void setActiveMode(bool active_mode) { _active_mode = active_mode; }
+        void setRootDir(const std::string &rootDir) { _rootDir = rootDir; }
 
         void resetDataMode();
         void sendCustomResponse(int code, const std::string& custom_message);
@@ -54,6 +56,7 @@ namespace ftp {
             std::filesystem::path _cwd;
             std::map<int, std::string> _commandResponses;
             std::filesystem::path _root_path;
+            std::filesystem::path _rootDir;
     };
 };
 

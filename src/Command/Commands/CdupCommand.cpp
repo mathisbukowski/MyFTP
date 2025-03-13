@@ -21,16 +21,23 @@ void ftp::CdupCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(530);
         return;
     }
-    std::filesystem::path current = client.getCwd();
+    std::filesystem::path currentCwd = client.getCwd();
+    std::filesystem::path currentRootPath = client.getRootPath();
 
-    if (current == "/") {
+    if (currentCwd == "/") {
         client.sendCustomResponse(550, "Already at root directory.");
         return;
     }
-    std::filesystem::path parent = current.parent_path();
-    if (parent.string().empty()) {
-        parent = "/";
+    std::filesystem::path currentParent = currentCwd.parent_path();
+    std::filesystem::path rootPathParent = currentRootPath.parent_path();
+
+    currentParent = std::filesystem::weakly_canonical(currentParent);
+    rootPathParent = std::filesystem::weakly_canonical(rootPathParent);
+    if (rootPathParent.string().find(client.getRootDir()) != 0) {
+        client.sendCommandResponse(550);
+        return;
     }
-    client.setCwd(parent);
+    client.setCwd(currentParent);
+    client.setRootPath(rootPathParent);
     client.sendCommandResponse(200);
 }

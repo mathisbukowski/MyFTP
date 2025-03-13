@@ -22,7 +22,7 @@ void ftp::DeleCommand::execute(std::string args, Client &client)
         client.sendCommandResponse(501);
         return;
     }
-    std::filesystem::path path = std::filesystem::current_path() / client.getRootPath() / args;
+    std::filesystem::path path = client.getRootPath() / args;
     if (!std::filesystem::exists(path)) {
         client.sendCommandResponse(550);
         return;

@@ -44,7 +44,8 @@ void ftp::Server::addNewClient(int client_socket, sockaddr_in clientAddr)
     _clients.emplace_back(client_socket);
     for (auto &client : _clients)
         if (client.getSocket() == client_socket) {
-            client.setRootPath(_rootPath);
+            client.setRootDir(std::filesystem::current_path() / _rootPath);
+            client.setRootPath(std::filesystem::current_path() / _rootPath);
             client.setDataAddr(clientAddr);
             break;
         }
