@@ -32,7 +32,8 @@ void ftp::StorCommand::execute(std::string args, Client &client)
         return;
     }
     client.sendCommandResponse(150);
-    std::ofstream file(args, std::ios::binary);
+    std::filesystem::path path = client.getRootPath() / args;
+    std::ofstream file(path, std::ios::binary);
     if (!file.is_open()) {
         client.sendCustomResponse(450, "Cannot open file.");
         return;
