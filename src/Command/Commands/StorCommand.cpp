@@ -48,19 +48,17 @@ void ftp::StorCommand::execute(std::string args, Client &client)
         while ((bytesRead = read(connectionSocket, buffer, sizeof(buffer))) > 0) {
             file.write(buffer, bytesRead);
         }
-        if (bytesRead == 0) {
-            client.sendCommandResponse(226);
-        } else if (bytesRead < 0) {
+        if (bytesRead < 0) {
             client.sendCommandResponse(450);
         }
         file.close();
         close(connectionSocket);
         close(client.getDataSocket());
+        client.setDataSocket(-1);
         _exit(0);
     } else {
-        close(connectionSocket);
-        close(client.getDataSocket());
         waitpid(pid, nullptr, 0);
-    } 
-    client.resetDataMode();
+        client.sendCommandResponse(226);
+        client.resetDataMode();
+    }
 }
