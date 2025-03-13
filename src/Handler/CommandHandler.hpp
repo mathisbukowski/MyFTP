@@ -21,6 +21,7 @@
 #include "../Command/Commands/PasvCommand.hpp"
 #include "../Command/Commands/PortCommand.hpp"
 #include "../Command/Commands/StorCommand.hpp"
+#include "../Command/Commands/DeleCommand.hpp"
 #include <map>
 #include <memory>
 #include <functional>

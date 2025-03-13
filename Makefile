@@ -20,6 +20,7 @@ SRC = src/main.cpp \
 		src/Command/Commands/PasvCommand.cpp \
 		src/Command/Commands/PortCommand.cpp \
 		src/Command/Commands/StorCommand.cpp \
+		src/Command/Commands/DeleCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 
