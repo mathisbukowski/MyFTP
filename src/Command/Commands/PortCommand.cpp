@@ -42,21 +42,5 @@ void ftp::PortCommand::execute(std::string args, Client &client)
     }
     client.setDataAddr(dataAddr);
     client.setActiveMode(true);
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocket < 0) {
-        client.sendCommandResponse(425);
-        return;
-    }
-    if (bind(serverSocket, (sockaddr *)&dataAddr, sizeof(dataAddr)) < 0) {
-        close(serverSocket);
-        client.sendCommandResponse(425);
-        return;
-    }
-    if (listen(serverSocket, 1) < 0) {
-        close(serverSocket);
-        client.sendCommandResponse(425);
-        return;
-    }
-    client.setDataSocket(serverSocket);
     client.sendCommandResponse(200);
 }

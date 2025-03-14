@@ -26,7 +26,12 @@ void ftp::StorCommand::execute(std::string args, Client &client)
         client.sendCustomResponse(425, "Use PORT or PASV first.");
         return;
     }
-    int connectionSocket = acceptDataConnection(client);
+    int connectionSocket;
+    if (client.isActiveMode()) {
+        connectionSocket = acceptDataActiveConnection(client);
+    } else  if (client.isPassiveMode()) {
+        connectionSocket = acceptDataPassiveConnection(client);
+    }
     if (connectionSocket < 0) {
         client.sendCustomResponse(425, "Cannot open data connection.");
         return;
