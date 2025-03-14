@@ -46,8 +46,6 @@ void ftp::StorCommand::execute(std::string args, Client &client)
         readAndWriteDataInServer(connectionSocket, file, client);
         file.close();
         close(connectionSocket);
-        close(client.getDataSocket());
-        client.setDataSocket(-1);
         _exit(0);
     } else {
         waitpid(pid, nullptr, 0);

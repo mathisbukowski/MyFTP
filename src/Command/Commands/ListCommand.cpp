@@ -1,26 +1,22 @@
 /*
 ** EPITECH PROJECT, 2025
-** MyFTP
+** myftp
 ** File description:
-** RetrCommand
+** 03
 */
 
-#include "RetrCommand.hpp"
+#include "ListCommand.hpp"
+
 #include <sys/wait.h>
 
-ftp::RetrCommand::RetrCommand()
+ftp::ListCommand::ListCommand()
 {
 }
 
-
-void ftp::RetrCommand::execute(std::string args, Client &client)
+void ftp::ListCommand::execute(std::string args, Client& client)
 {
     if (!client.isLoggedIn()) {
         client.sendCommandResponse(530);
-        return;
-    }
-    if (args.empty()) {
-        client.sendCommandResponse(501);
         return;
     }
     if (!client.isActiveMode() && !client.isPassiveMode()) {
@@ -32,21 +28,25 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
         client.sendCustomResponse(425, "Cannot open data connection.");
         return;
     }
-    client.sendCommandResponse(150);
-    std::filesystem::path path = client.getRootPath() / args;
-    std::ifstream file(path, std::ios::binary);
-    if (!file.is_open()) {
-        client.sendCustomResponse(450, "Cannot open file.");
-        close(connectionSocket);
+    std::filesystem::path path;
+    if (args.empty()) {
+        path = client.getRootPath();
+    } else {
+        path = client.getRootPath() / args;
+    }
+    path = std::filesystem::weakly_canonical(path);
+    if (!std::filesystem::exists(path) || path.string().find(client.getRootDir().string()) != 0) {
+        client.sendCommandResponse(550);
         return;
     }
+    client.sendCommandResponse(150);
     pid_t pid = fork();
     if (pid < 0) {
         client.sendCustomResponse(450, "Fork failed.");
         client.resetDataMode();
     } else if (pid == 0) {
-        readAndWriteDataInClient(connectionSocket, file, client);
-        file.close();
+        dup2(connectionSocket, STDOUT_FILENO);
+        execlp("/bin/ls", "ls", "-l", path.c_str(), nullptr);
         close(connectionSocket);
         _exit(0);
     } else {

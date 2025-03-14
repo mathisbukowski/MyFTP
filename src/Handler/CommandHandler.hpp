@@ -23,6 +23,7 @@
 #include "../Command/Commands/StorCommand.hpp"
 #include "../Command/Commands/DeleCommand.hpp"
 #include "../Command/Commands/RetrCommand.hpp"
+#include "../Command/Commands/ListCommand.hpp"
 #include <map>
 #include <memory>
 #include <functional>
