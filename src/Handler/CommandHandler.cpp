@@ -24,6 +24,7 @@ ftp::CommandHandler::CommandHandler(Server &server) : _server(server)
         {"stor", []() { return std::make_unique<StorCommand>(); }},
         {"dele", []() { return std::make_unique<DeleCommand>(); }},
         {"retr", []() { return std::make_unique<RetrCommand>(); }},
+        {"list", []() { return std::make_unique<ListCommand>(); }}
     };
 }
 

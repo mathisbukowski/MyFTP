@@ -22,6 +22,7 @@ SRC = src/main.cpp \
 		src/Command/Commands/StorCommand.cpp \
 		src/Command/Commands/DeleCommand.cpp \
 		src/Command/Commands/RetrCommand.cpp \
+		src/Command/Commands/ListCommand.cpp \
 		src/Handler/CommandHandler.cpp \
 
 
