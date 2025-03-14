@@ -27,7 +27,14 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
         client.sendCustomResponse(425, "Use PORT or PASV first.");
         return;
     }
-    int connectionSocket = acceptDataConnection(client);
+    int connectionSocket;
+    std::cout << "Active mode: " << client.isActiveMode() << std::endl;
+    std::cout << "Passive mode: " << client.isPassiveMode() << std::endl;
+    if (client.isActiveMode()) {
+        connectionSocket = acceptDataActiveConnection(client);
+    } else if (client.isPassiveMode()) {
+        connectionSocket = acceptDataPassiveConnection(client);
+    }
     if (connectionSocket < 0) {
         client.sendCustomResponse(425, "Cannot open data connection.");
         return;
