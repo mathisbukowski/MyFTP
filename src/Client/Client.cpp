@@ -75,6 +75,8 @@ void ftp::Client::sendPasvResponse() {
 }
 
 void ftp::Client::resetDataMode() {
-    setActiveMode(false);
-    setPassiveMode(false);
+    this->setActiveMode(false);
+    this->setPassiveMode(false);
+    close(this->getDataSocket());
+    this->setDataSocket(-1);
 }

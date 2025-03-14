@@ -48,8 +48,6 @@ void ftp::RetrCommand::execute(std::string args, Client &client)
         readAndWriteDataInClient(connectionSocket, file, client);
         file.close();
         close(connectionSocket);
-        close(client.getDataSocket());
-        client.setDataSocket(-1);
         _exit(0);
     } else {
         close(connectionSocket);
